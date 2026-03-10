@@ -1,0 +1,4 @@
+lingodotdev:
+  image: lingodotdev/ci-action:latest
+  script:
+    - echo "Done"

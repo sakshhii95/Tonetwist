@@ -1,0 +1,7 @@
+pipelines:
+  branches:
+    main:
+      - step:
+          name: Run i18n
+          script:
+            - pipe: lingodotdev/lingo.dev:main
