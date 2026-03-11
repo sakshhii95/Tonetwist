@@ -390,7 +390,7 @@ export default function Home() {
             {displayedOutput === output && output && (
               <button className="copy-btn" onClick={handleCopy}
                 style={copied ? { borderColor: "#f5454b", color: "#f5454b" } : {}}>
-                {copied ? t.copied : t.copy}
+                {copied ? ts("copied") : ts("copy")}
               </button>
             )}
           </div>
