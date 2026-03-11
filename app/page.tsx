@@ -115,6 +115,7 @@ export default function Home() {
   const detectTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const t = UI_STRINGS[language.code] || UI_STRINGS.en;
+  const ts = (key: string) => t[key] as string;
 
   // Auto-detect tone as user types
   useEffect(() => {
@@ -285,11 +286,11 @@ export default function Home() {
       <div className="container">
         <div className="badge">
           <span className="badge-dot" />
-          {t.poweredBy}
+          {ts("poweredBy")}
         </div>
 
         <h1>ToneTwist</h1>
-        <p className="subtitle">{t.subtitle}</p>
+        <p className="subtitle">{ts("subtitle")}</p>
 
         {/* Tone Detection Badge */}
         {detecting && (
@@ -300,16 +301,16 @@ export default function Home() {
         )}
         {!detecting && detectedTone && detectedTone !== "neutral" && toneInfo && (
           <div className="tone-badge detected">
-            {toneInfo.emoji} {t.detectedTone}: {vibeName(detectedTone)}
+            {toneInfo.emoji} {ts("detectedTone")}: {vibeName(detectedTone)}
           </div>
         )}
         {!detecting && detectedTone === "neutral" && (
           <div className="tone-badge detected" style={{ background: "#11111115", borderColor: "#33333360", color: "#888" }}>
-            📝 {t.detectedTone}: {t.neutral}
+            📝 {ts("detectedTone")}: {ts("neutral")}
           </div>
         )}
 
-        <div className="section-label">{t.selectVibe}</div>
+        <div className="section-label">{ts("selectVibe")}</div>
         <div className="vibes-grid">
           {VIBES.map((v) => (
             <button
@@ -323,7 +324,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="section-label">{t.outputLang}</div>
+        <div className="section-label">{ts("outputLang")}</div>
         <div className="lang-row">
           {LANGUAGES.map((l) => (
             <button
@@ -336,13 +337,13 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="section-label">{t.yourText}</div>
+        <div className="section-label">{ts("yourText")}</div>
         <div className="input-wrap">
           <textarea
             id="input-text"
             value={input}
             onChange={(e) => setText(e.target.value)}
-            placeholder={t.placeholder}
+            placeholder={ts("placeholder")}
             rows={4}
           />
           <span className="char-count">{input.length} chars</span>
@@ -360,9 +361,9 @@ export default function Home() {
             }}
           >
             {loading ? (
-              <><span className="spinner" />{t.twisting}</>
+              <><span className="spinner" />{ts("twisting")}</>
             ) : (
-              `✦ ${t.twistBtn} ${vibeName(vibe.id)} ${vibe.emoji}`
+              `✦ ${ts("twistBtn")} ${vibeName(vibe.id)} ${vibe.emoji}`
             )}
           </button>
 
