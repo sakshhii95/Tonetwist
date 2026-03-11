@@ -19,7 +19,8 @@ const LANGUAGES = [
 ];
 
 // UI strings for multilingual support
-const UI_STRINGS: Record<string, Record<string, string>> = {
+type UIStrings = Record<string, string | Record<string, string>>;
+const UI_STRINGS: Record<string, UIStrings> = {
   en: {
     selectVibe: "select vibe",
     outputLang: "output language",
