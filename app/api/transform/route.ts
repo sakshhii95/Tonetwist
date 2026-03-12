@@ -1,40 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
-import { LingoDotDevEngine } from "lingo.dev/sdk";
 import Groq from "groq-sdk";
 
-const VIBE_PROMPTS: Record<string, string> = {
-  genz: "Rewrite this in Gen Z internet slang. Use words like no cap, fr fr, lowkey, slay, bussin. Be casual and fun.",
-  pirate: "Rewrite this in classic pirate speak. Use Arrr, matey, ye, shiver me timbers, landlubber, blimey. Be dramatic.",
-  shakespeare: "Rewrite this in Shakespearean English. Use thee, thou, hath, dost, wherefore, forsooth. Be poetic.",
-  corporate: "Rewrite this in corporate jargon. Use synergy, leverage, circle back, bandwidth, move the needle. Be formal.",
-  boomer: "Rewrite this like a boomer. Reference back in my day, complain about technology, be nostalgic.",
-  aussie: "Rewrite this in Australian slang. Use Gday, mate, arvo, strewth, reckon, heaps, no worries.",
+const TONE_PROMPTS: Record<string, string> = {
+  formal: "Rewrite this text in a formal, sophisticated tone. Use proper grammar, elevated vocabulary, and a respectful, serious style.",
+  friendly: "Rewrite this text in a warm, friendly, approachable tone. Be conversational, upbeat, and personable.",
+  sarcastic: "Rewrite this text in a sarcastic, dry, witty tone. Use irony and subtle mockery while keeping it clever.",
+  professional: "Rewrite this text in a professional, polished, business-appropriate tone. Be clear, concise, and authoritative.",
+  aggressive: "Rewrite this text in a bold, aggressive, direct tone. Be blunt, forceful, and no-nonsense.",
 };
 
 export async function POST(req: NextRequest) {
-  const { text, vibe, language } = await req.json();
-  const vibePrompt = VIBE_PROMPTS[vibe] || VIBE_PROMPTS.genz;
+  const { text } = await req.json();
+  if (!text?.trim()) return NextResponse.json({ samples: [] });
 
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-  const completion = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [{ role: "user", content: `${vibePrompt}\n\nOriginal text: "${text}"\n\nRespond with ONLY the transformed text, nothing else.` }],
-    max_tokens: 1000,
-  });
+  const tones = Object.entries(TONE_PROMPTS);
+  
+  const results = await Promise.all(
+    tones.map(async ([tone, prompt]) => {
+      const completion = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        messages: [{ role: "user", content: `${prompt}\n\nOriginal: "${text}"\n\nRespond with ONLY the rewritten text, nothing else.` }],
+        max_tokens: 200,
+      });
+      return { tone, result: completion.choices[0]?.message?.content || "" };
+    })
+  );
 
-  const twisted = completion.choices[0]?.message?.content || "Could not transform text.";
-
-  if (language === "en") {
-    return NextResponse.json({ result: twisted });
-  }
-
-  const lingo = new LingoDotDevEngine({ apiKey: process.env.LINGODOTDEV_API_KEY });
-
-  const translated = await lingo.localizeText(twisted, {
-    sourceLocale: "en",
-    targetLocale: language,
-  });
-
-  return NextResponse.json({ result: translated });
+  return NextResponse.json({ samples: results });
 }
