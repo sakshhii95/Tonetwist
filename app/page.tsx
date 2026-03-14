@@ -250,7 +250,18 @@ export default function Home() {
   }
 
   function handleExport() {
-    const content = `ToneTwist by LinguaFlip\n${"─".repeat(30)}\nOriginal: ${input}\nVibe: ${vibe.emoji} ${vibeName(vibe.id)} · ${language.flag} ${language.label}\nTone: ${tone.emoji} ${tone.label}\n\nResult: ${output}\n${"─".repeat(30)}\ntonetwist-m2ec.vercel.app`;
+    const divider = Array(30).fill("\u2500").join("");
+    const content = [
+      "ToneTwist by LinguaFlip",
+      divider,
+      "Original: " + input,
+      "Vibe: " + vibe.emoji + " " + vibeName(vibe.id) + " \u00b7 " + language.flag + " " + language.label,
+      "Tone: " + tone.emoji + " " + tone.label,
+      "",
+      "Result: " + output,
+      divider,
+      "tonetwist-m2ec.vercel.app"
+    ].join("\n");
     const blob = new Blob([content], { type: "text/plain" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -619,3 +630,4 @@ export default function Home() {
     </>
   );
 }
+
