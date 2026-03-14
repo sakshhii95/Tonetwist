@@ -63,6 +63,9 @@ export default function Home() {
   const [selectedSample, setSelectedSample] = useState<string | null>(null);
   const [speaking, setSpeaking] = useState(false);
   const [shareMsg, setShareMsg] = useState("");
+  const [showTonePicker, setShowTonePicker] = useState(false);
+  const [loadingTones, setLoadingTones] = useState(false);
+  const [selectedTone, setSelectedTone] = useState<string | null>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
   const sparkleId = useRef(0);
   const detectTimeout = useRef<NodeJS.Timeout|null>(null);
