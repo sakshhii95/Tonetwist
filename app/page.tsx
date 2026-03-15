@@ -94,11 +94,7 @@ export default function Home() {
     return () => { if (detectTimeout.current) clearTimeout(detectTimeout.current); };
   }, [input]);
 
-  useEffect(() => {
-    const handler = () => setShowLangMenu(false);
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, []);
+
 
   function addSparkles(e: React.MouseEvent) {
     const rect = btnRef.current?.getBoundingClientRect();
@@ -278,7 +274,7 @@ export default function Home() {
       <div className="glow-orb" style={{ width: 500, height: 300, bottom: 0, right: -100, background: "#f5454b", opacity: 0.04 }} />
 
       {/* UI Language Globe */}
-      <div style={{ position: "fixed", top: 16, right: 24, zIndex: 100 }} onClick={e => e.stopPropagation()}>
+      <div style={{ position: "fixed", top: 16, right: 24, zIndex: 100 }}>
         <button onClick={() => setShowLangMenu(v => !v)} style={{ background: "rgba(199,226,253,0.9)", backdropFilter: "blur(12px)", border: "1px solid rgba(245,69,75,0.3)", borderRadius: "100px", padding: "8px 16px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontFamily: "'DM Mono', monospace", fontSize: 12, letterSpacing: 1, color: "#333", boxShadow: "0 4px 16px rgba(0,0,0,0.08)" }}>
           🌐 {uiLang.flag} {uiLang.label}
         </button>
