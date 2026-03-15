@@ -152,6 +152,15 @@ export default function Home() {
   function handleSpeak(text: string) {
     if (speaking) { window.speechSynthesis.cancel(); setSpeaking(false); return; }
     const u = new SpeechSynthesisUtterance(text);
+    // Map language codes to BCP 47 tags for TTS
+    const langMap: Record<string, string> = {
+      en: "en-US", es: "es-ES", fr: "fr-FR", hi: "hi-IN", ja: "ja-JP",
+    };
+    u.lang = langMap[language.code] || "en-US";
+    // Try to find a matching voice
+    const voices = window.speechSynthesis.getVoices();
+    const match = voices.find(v => v.lang.startsWith(language.code));
+    if (match) u.voice = match;
     u.onend = () => setSpeaking(false);
     setSpeaking(true);
     window.speechSynthesis.speak(u);
@@ -277,7 +286,7 @@ export default function Home() {
           <div style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, background: "rgba(240,248,255,0.97)", backdropFilter: "blur(16px)", border: "1px solid rgba(245,69,75,0.2)", borderRadius: 12, padding: 8, minWidth: 170, boxShadow: "0 8px 32px rgba(0,0,0,0.12)", animation: "fadeUp 0.2s ease" }}>
             <div style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "#aaa", padding: "4px 8px 8px", fontFamily: "'DM Mono', monospace" }}>UI LANGUAGE</div>
             {LANGUAGES.map((l) => (
-              <button key={l.code} onClick={() => { setUiLang(l); setShowLangMenu(false); }} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 12px", border: "none", background: uiLang.code === l.code ? "#f5454b15" : "transparent", borderRadius: 8, cursor: "pointer", fontFamily: "'DM Mono', monospace", fontSize: 12, color: uiLang.code === l.code ? "#f5454b" : "#444", letterSpacing: 1, transition: "all 0.15s" }}>
+              <button key={l.code} onClick={(e) => { e.stopPropagation(); setUiLang(l); setShowLangMenu(false); }} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 12px", border: "none", background: uiLang.code === l.code ? "#f5454b15" : "transparent", borderRadius: 8, cursor: "pointer", fontFamily: "'DM Mono', monospace", fontSize: 12, color: uiLang.code === l.code ? "#f5454b" : "#444", letterSpacing: 1, transition: "all 0.15s" }}>
                 {l.flag} {l.label}
                 {uiLang.code === l.code && <span style={{ marginLeft: "auto", fontSize: 10 }}>✓</span>}
               </button>
