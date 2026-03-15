@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { LingoDotDevEngine } from "lingo.dev/sdk";
 import Groq from "groq-sdk";
 
 const VIBE_PROMPTS: Record<string, string> = {
   genz: "Rewrite this text in Gen Z slang. Use casual internet language, abbreviations like 'ngl', 'lowkey', 'fr', 'no cap', 'bussin', 'vibe'. Keep it short and punchy.",
   pirate: "Rewrite this text as a pirate would say it. Use pirate speak: 'arr', 'matey', 'ye', 'landlubber', 'shiver me timbers', nautical references.",
   shakespeare: "Rewrite this text in Shakespearean English. Use 'thee', 'thou', 'dost', 'hath', 'wherefore', poetic structure and dramatic flair.",
-  corporate: "Rewrite this text in corporate speak. Use buzzwords like 'synergy', 'leverage', 'circle back', 'bandwidth', 'move the needle', 'pivot'. Make it sound like a business memo.",
+  corporate: "Rewrite this text in corporate speak. Use buzzwords like 'synergy', 'leverage', 'circle back', 'bandwidth', 'move the needle'. Make it sound like a business memo.",
   boomer: "Rewrite this text as a Baby Boomer would say it. Reference 'back in my day', use formal grammar, mention hard work, be slightly out of touch with technology.",
-  aussie: "Rewrite this text in Australian slang. Use 'mate', 'arvo', 'reckon', 'heaps', 'no worries', 'crikey', 'strewth'. Keep it casual and friendly.",
+  aussie: "Rewrite this text in Australian slang. Use 'mate', 'arvo', 'reckon', 'heaps', 'no worries', 'crikey'. Keep it casual and friendly.",
 };
 
 const TONE_PROMPTS: Record<string, string> = {
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: "user",
-          content: `${vibePrompt}${tonePrompt}\n\nOriginal text: "${text}"\n\nRespond with ONLY the rewritten text, nothing else. No explanation, no quotes around it.`,
+          content: `${vibePrompt}${tonePrompt}\n\nOriginal text: "${text}"\n\nRespond with ONLY the rewritten text, nothing else.`,
         },
       ],
       max_tokens: 500,
@@ -43,10 +44,8 @@ export async function POST(req: NextRequest) {
 
     let result = completion.choices[0]?.message?.content || "Something went wrong!";
 
-    // Translate if not English
     if (language && language !== "en") {
-      const { Lingo } = await import("lingo.dev/sdk");
-      const lingo = new Lingo({ apiKey: process.env.LINGODOTDEV_API_KEY });
+      const lingo = new LingoDotDevEngine({ apiKey: process.env.LINGODOTDEV_API_KEY });
       const translated = await lingo.localizeText(result, {
         sourceLocale: "en",
         targetLocale: language,
@@ -57,6 +56,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ result });
   } catch (error) {
     console.error("Transform error:", error);
-    return NextResponse.json({ error: "Transform failed", result: "Something went wrong!" }, { status: 500 });
+    return NextResponse.json({ result: "Something went wrong!" }, { status: 500 });
   }
 }
