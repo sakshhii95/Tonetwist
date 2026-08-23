@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
   const completion = await groq.chat.completions.create({
-   model: "llama-3.1-8b-instant",
+  model: "openai/gpt-oss-20b",
     messages: [{
       role: "user",
       content: `Detect the tone/style of this text. Reply with ONLY one word from this list: genz, pirate, shakespeare, corporate, boomer, aussie, neutral.
